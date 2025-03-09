@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState, useEffect } from "react";
+import { Switch } from "@/components/ui/switch"; // 添加 Switch 组件导入
 
 type ConnectionStatus = "connected" | "disconnected" | "connecting";
 type AlertType = "404" | "401" | null;
@@ -13,6 +14,7 @@ function App() {
   const [port, setPort] = useState("");
   const [token, setToken] = useState("");
   const [alertType, setAlertType] = useState<AlertType>(null);
+  const [autoSelectSearch, setAutoSelectSearch] = useState(false); // 添加新的状态
 
   // 加载保存的配置
   useEffect(() => {
@@ -39,13 +41,15 @@ function App() {
         'serverPort', 
         'serverToken',
         'connectionStatus',
-        'lastStatusCode'
+        'lastStatusCode',
+        'autoSelectSearch' // 添加新的配置项
       ]);
       
       if (result.serverUrl) setUrl(result.serverUrl);
       if (result.serverPort) setPort(result.serverPort);
       if (result.serverToken) setToken(result.serverToken);
       if (result.connectionStatus) setStatus(result.connectionStatus);
+      if (result.autoSelectSearch !== undefined) setAutoSelectSearch(result.autoSelectSearch);
       
       // 设置告警状态
       if (result.lastStatusCode === 401) {
@@ -154,6 +158,12 @@ function App() {
     }
   };
 
+  // 处理 toggle 变化
+  const handleToggleChange = async (checked: boolean) => {
+    setAutoSelectSearch(checked);
+    await chrome.storage.local.set({ autoSelectSearch: checked });
+  };
+
   return (
     <div className="w-[300px] p-4 space-y-4">
       {alertType && (
@@ -201,6 +211,16 @@ function App() {
           onChange={(e) => handleInputChange('token', e.target.value)}
           placeholder="请输入认证令牌"
           type="password"
+        />
+      </div>
+
+      {/* 添加 toggle 开关 */}
+      <div className="flex items-center justify-between">
+        <Label htmlFor="auto-select-search" className="text-sm">选中&清空搜索栏</Label>
+        <Switch 
+          id="auto-select-search" 
+          checked={autoSelectSearch}
+          onCheckedChange={handleToggleChange}
         />
       </div>
 

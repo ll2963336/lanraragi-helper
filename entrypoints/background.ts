@@ -206,15 +206,16 @@ export default defineBackground(() => {
         return;
       }
 
-      console.log('Processing gallery data:', message.data);
+      // console.log('Processing gallery data:', message.data);
 
       for (const gallery of message.data) {
         try {
           // 步骤0：如果link或标题为空，跳过
           if (!gallery.link || !gallery.title) {
-            console.log('Skipping empty link or title:', gallery);
+            // console.log('Skipping empty link or title:', gallery);
             continue;
           }
+          
           let data: any[]
           // 步骤1：通过link搜索
           data = await searchArchive(gallery.link, config);
