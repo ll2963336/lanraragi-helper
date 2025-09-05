@@ -75,9 +75,22 @@ export default defineContentScript({
           button2.addEventListener('click', () => {
             navigator.clipboard.writeText(titleEl?.innerText || '');
           });
+
+          const button3 = document.createElement('button');
+          button3.setAttribute('style', 'font-size: 20px;');
+          button3.textContent = '复制GID';
+          button3.addEventListener('click', () => {
+            console.log('复制GID', link, link.split('/'));
+            const pathArr = link.split('/');
+            const gid = pathArr[2]
+            const gt = pathArr[3]
+            const text = `${titleEl?.innerText || ''} [GID ${gid} GT ${gt}]`
+            navigator.clipboard.writeText(text);
+          });
           
           btnContainer.appendChild(button1);
           btnContainer.appendChild(button2);
+          btnContainer.appendChild(button3);
           item.appendChild(btnContainer);
         }
       });
