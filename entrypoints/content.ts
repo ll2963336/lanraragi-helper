@@ -96,6 +96,25 @@ export default defineContentScript({
       });
     }
 
+    // 给title增高
+    function increaseTitleHeight(domId: string, link: string) {
+      const items = document.querySelectorAll('.itg.glte > tbody > tr');
+      Array.from(items).forEach((item, index) => {
+        if (index.toString() === domId) {
+          // 检查是否已经添加了按钮
+          if (item.querySelector('.btn-container')) {
+            return;
+          }
+          // 给item添加position
+          (item as HTMLElement).style.position = 'relative';
+          
+          const titleEl = item.querySelector('.glink') as HTMLElement;
+
+          titleEl.style.lineHeight = '50px';
+        }
+      });
+    }
+
     // 提取画廊信息
     function extractGalleryInfo() {
       const newItems = document.querySelectorAll('.itg.glte > tbody > tr');
@@ -118,6 +137,7 @@ export default defineContentScript({
       // 立即为所有项添加按钮，不等待搜索结果
       filterGalleryData.forEach(item => {
         addButtons(item.domId, item.link);
+        increaseTitleHeight(item.domId, item.link);
       });
 
       chrome.runtime.sendMessage({
